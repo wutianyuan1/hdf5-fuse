@@ -1,7 +1,7 @@
 #ifndef H5_FILEWRAPPER_H
 #define H5_FILEWRAPPER_H
-#include <memory>
 #define FUSE_USE_VERSION 31
+#include <memory>
 #include <iostream>
 #include <string>
 #include <vector>
