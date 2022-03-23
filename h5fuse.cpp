@@ -3,12 +3,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
-#ifdef linux
-/* For pread()/pwrite()/utimensat() */
-#define _XOPEN_SOURCE 700
-#endif
-
 #include <fuse.h>
 #include <stdio.h>
 #include <string.h>
@@ -112,7 +106,6 @@ int main(int argc, char *argv[]){
 	char *new_argv[MAX_ARGS];
 
 	umask(0);
-			/* Process the "--plus" option apart */
 	for (i = 0, new_argc = 0; (i < argc-1) && (new_argc < MAX_ARGS); i++) {
 		if (!strcmp(argv[i], "--plus"))
 			fill_dir_plus = FUSE_FILL_DIR_PLUS;

@@ -30,8 +30,10 @@ H5FSRoot::GetRootHandle() const{
 
 hsize_t
 H5FSRoot::DsetSize(const std::string&& path){
+    assert(m_rootid >= 0);
+
     hid_t dataset = H5Dopen(m_rootid, path.c_str(), H5P_DEFAULT);
-    if(dataset < 0)
+    if (dataset < 0)
         return 0;
 
     hid_t datatype = H5Dget_type(dataset);
@@ -97,6 +99,8 @@ H5FSRoot::GetAttr(const std::string&& path, struct stat *stbuf){
 
 herr_t
 H5FSRoot::Open(const std::string&& path, struct fuse_file_info *fi){
+    assert(m_rootid >= 0);
+
     if((fi->flags & 3) != O_RDONLY)
         return -EACCES;
     H5O_info_t obj_info;
@@ -109,6 +113,8 @@ H5FSRoot::Open(const std::string&& path, struct fuse_file_info *fi){
 hsize_t
 H5FSRoot::Read(const std::string&& path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
     (void) fi;
+    assert(m_rootid >= 0);
+
     hid_t dataset = H5Dopen(m_rootid, path.c_str(), H5P_DEFAULT);
     hid_t datatype = H5Dget_type(dataset);
     size_t buf_size = DsetSize(path.c_str());
@@ -124,6 +130,8 @@ H5FSRoot::Read(const std::string&& path, char *buf, size_t size, off_t offset, s
 herr_t
 H5FSRoot::Unlink(const std::string&& path){
     H5O_info_t obj_info;
+    assert(m_rootid >= 0);
+
     if(H5Oget_info_by_name(m_rootid, path.c_str(), &obj_info, H5P_DEFAULT, H5P_DEFAULT) < 0)
         return -ENOENT;
     return H5Ldelete(m_rootid, path.c_str(), H5P_DEFAULT);
@@ -131,5 +139,6 @@ H5FSRoot::Unlink(const std::string&& path){
 
 herr_t
 H5FSRoot::Mkgrp(const std::string&& path, mode_t mode){
+    assert(m_rootid >= 0);
     return (H5Gcreate(m_rootid, path.c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT) >= 0) ? 0 : EACCES;
 }
